@@ -40,18 +40,6 @@ docker compose up --build --wait
 После запуска приложение будет доступно по адресу:
 http://localhost:5000
 
-Структура проекта
-<pre>
-app/
-├── models/              # SQLAlchemy модели
-├── controllers/         # Логика обработки данных
-├── views/               # Flask маршруты (Blueprints)
-├── templates/           # HTML-шаблоны (Jinja2)
-├── static/              # Статические файлы (если нужно)
-├── __init__.py          # Инициализация приложения
-run.py                   # Точка входа Flask
-docker-compose.yml       # Сборка и запуск
-</pre>
 Миграции
 
 flask db init          # Один раз
