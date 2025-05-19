@@ -19,22 +19,10 @@
 
 
 Установка и запуск
-------------------------------------------------------
-    Backend: Python 3 + Flask + SQLAlchemy
-
-    Frontend: HTML + Bootstrap 5
-
-    База данных: PostgreSQL
-
-    Migrations: Alembic + Flask-Migrate
-
-    Контейнеризация: Docker + Docker Compose (v2)
-------------------------------------------------------
-
 
 1. Клонируй репозиторий
 
-git clone https://github.com/yourusername/finance-app.git
+git clone
 cd finance-app
 
 2. Создай .env файл
