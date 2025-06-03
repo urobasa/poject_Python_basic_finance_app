@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Операции{% endblock %}
+
+{% block content %}
+<h2>Все операции</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Сумма</th>
+            <th>Категория</th>
+            <th>Счёт</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for op in operations %}
+        <tr>
+            <td>{{ op.datetime.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ op.amount }} ₽</td>
+            <td>{{ op.category.name }}</td>
+            <td>{{ op.account.name }}</td>
+            <td>{{ op.description or '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('operations.create_operation_view') }}" class="btn btn-success">➕ Новая операция</a>
+{% endblock %}

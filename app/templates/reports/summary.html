@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Аналитика{% endblock %}
+
+{% block content %}
+<h2>Отчёт</h2>
+
+<form method="get" class="row mb-4">
+    <div class="col-md-3">
+        <label class="form-label">Начало периода</label>
+        <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Конец периода</label>
+        <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary">Показать</button>
+    </div>
+</form>
+
+<div class="row mb-3">
+    <div class="col">
+        <div class="alert alert-success">Доход: {{ total_income }} ₽</div>
+    </div>
+    <div class="col">
+        <div class="alert alert-danger">Расход: {{ total_expense }} ₽</div>
+    </div>
+</div>
+
+<h4>Сводка по категориям</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Категория</th>
+            <th>Тип</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in summary %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ 'Доход' if item[1] == 'income' else 'Расход' }}</td>
+            <td>{{ item[2] }} ₽</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

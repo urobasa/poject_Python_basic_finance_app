@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Счета{% endblock %}
+
+{% block content %}
+<h2>Счета</h2>
+<a href="{{ url_for('transfer.transfer') }}" class="btn btn-secondary mb-3">Перевод между счетами</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Тип</th>
+            <th>Баланс</th>
+            <th>Основной</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for acc in accounts %}
+        <tr>
+            <td>{{ acc.name }}</td>
+            <td>{{ acc.type }}</td>
+            <td>{{ acc.balance }} ₽</td>
+            <td>{% if acc.is_default %}✅{% endif %}</td>
+            <td>
+                <a href="{{ url_for('accounts.edit_account_view', account_id=acc.id) }}" class="btn btn-sm btn-primary">✏️</a>
+                <form action="{{ url_for('accounts.delete_account_view', account_id=acc.id) }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger">🗑</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('accounts.create_account_view') }}" class="btn btn-success">➕ Новый счёт</a>
+{% endblock %}

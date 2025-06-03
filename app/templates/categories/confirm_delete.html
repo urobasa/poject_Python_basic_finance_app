@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Удалить категорию{% endblock %}
+
+{% block content %}
+<h2>Удаление категории</h2>
+
+<p>
+  Вы действительно хотите удалить категорию <strong>{{ category.name }}</strong>?
+</p>
+
+{% if category.operations %}
+  <p>В этой категории есть операции. Выберите категорию, куда их перенести:</p>
+
+  <form method="POST">
+    <div class="mb-3">
+      <label for="new_category_id" class="form-label">Категория для переноса</label>
+      <select name="new_category_id" class="form-select" required>
+        {% for c in categories %}
+          <option value="{{ c.id }}">{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-danger">Удалить и перенести</button>
+    <a href="{{ url_for('categories.list_categories') }}" class="btn btn-secondary">Отмена</a>
+  </form>
+{% else %}
+  <form method="POST">
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a href="{{ url_for('categories.list_categories') }}" class="btn btn-secondary">Отмена</a>
+  </form>
+{% endif %}
+{% endblock %}

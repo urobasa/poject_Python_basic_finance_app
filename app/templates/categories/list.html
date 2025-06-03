@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Категории{% endblock %}
+
+{% block content %}
+<h2>Категории</h2>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-warning">{{ messages[0] }}</div>
+  {% endif %}
+{% endwith %}
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Тип</th>
+      <th>Родитель</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cat in categories %}
+    <tr>
+      <td>{{ cat.name }}</td>
+      <td>{% if cat.type == 'income' %}Доход{% else %}Расход{% endif %}</td>
+      <td>{{ cat.parent.name if cat.parent else '—' }}</td>
+      <td>
+        <a href="{{ url_for('categories.edit_category_view', category_id=cat.id) }}"
+           class="btn btn-sm btn-primary">✏️</a>
+
+        <a href="{{ url_for('categories.confirm_delete_category', category_id=cat.id) }}"
+           class="btn btn-sm btn-danger">🗑</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{{ url_for('categories.create_category_view') }}" class="btn btn-success">
+  ➕ Новая категория
+</a>
+{% endblock %}

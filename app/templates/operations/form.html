@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Новая операция{% endblock %}
+
+{% block content %}
+<h2>Добавить операцию</h2>
+
+<form method="POST">
+    <div class="mb-3">
+        <label for="amount" class="form-label">Сумма</label>
+        <input type="number" step="0.01" name="amount" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="category_id" class="form-label">
+            Категория
+            <a href="{{ url_for('categories.create_category_view') }}" class="btn btn-sm btn-outline-secondary">➕ Новая</a>
+        </label>
+        <select name="category_id" class="form-select" required>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">
+                    {{ cat.name }} ({% if cat.type == 'income' %}Доход{% else %}Расход{% endif %})
+            </option>
+
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="account_id" class="form-label">
+            Счёт
+            <a href="{{ url_for('accounts.create_account_view') }}" class="btn btn-sm btn-outline-secondary">➕ Новый</a>
+        </label>
+        <select name="account_id" class="form-select" required>
+            {% for acc in accounts %}
+            <option value="{{ acc.id }}">{{ acc.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="date" class="form-label">Дата (ДД.ММ.ГГГГ)</label>
+            <input type="date" name="date" class="form-control"
+                   value="{{ now.strftime('%Y-%m-%d') }}" required>
+            <div class="form-text">
+                Отображается как {{ now.strftime('%d.%m.%Y') }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label for="time" class="form-label">Время (24ч)</label>
+            <input type="time" name="time" class="form-control"
+                   value="{{ now.strftime('%H:%M') }}" required>
+            <div class="form-text">
+                Формат: ЧЧ:ММ (например, 08:30)
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Описание</label>
+        <textarea name="description" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">На главную</a>
+</form>
+{% endblock %}

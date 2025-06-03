@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Категория{% endblock %}
+
+{% block content %}
+<h2>{{ category and 'Редактировать' or 'Создать' }} категорию</h2>
+
+<form method="POST">
+    <div class="mb-3">
+        <label for="name" class="form-label">Название</label>
+        <input type="text" name="name" class="form-control" value="{{ category.name if category else '' }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="type" class="form-label">Тип</label>
+        <select name="type" class="form-select" required>
+            <option value="expense" {% if category and category.type == 'expense' %}selected{% endif %}>Расход</option>
+            <option value="income" {% if category and category.type == 'income' %}selected{% endif %}>Доход</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="parent_id" class="form-label">Родительская категория (необязательно)</label>
+        <select name="parent_id" class="form-select">
+            <option value="">—</option>
+            {% for c in categories %}
+                {% if not category or c.id != category.id %}
+                <option value="{{ c.id }}" {% if category and category.parent_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{{ url_for('categories.list_categories') }}" class="btn btn-secondary">Назад</a>
+</form>
+{% endblock %}
