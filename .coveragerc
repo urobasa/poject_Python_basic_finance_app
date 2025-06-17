@@ -1,0 +1,23 @@
+[run]
+# Отслеживаем только твой код
+source =
+    app
+
+# Игнорировать системные и сторонние библиотеки
+omit =
+    */tests/*
+    */migrations/*
+    */__init__.py
+    /usr/*
+    /lib/*
+    */site-packages/*
+
+[report]
+# Убираем лишние строки из отчёта
+exclude_lines =
+    pragma: no cover
+    if __name__ == "__main__":
+    if app.debug
+
+# Показывать недостающие строки
+show_missing = True

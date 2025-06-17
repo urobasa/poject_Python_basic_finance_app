@@ -11,4 +11,4 @@ class Account(db.Model):
     operations = db.relationship('Operation', backref='account', lazy=True)
 
     def __repr__(self):
-        return f'<Account {self.name}>'
+       return f"<Account {self.name} ({self.type}), user_id={self.user_id}>"

@@ -4,9 +4,13 @@ from .extensions import db, migrate, csrf, login_manager
 from app.models.user import User
 
 
-def create_app():
+def create_app(config_name=None):
     app = Flask(__name__)
-    app.config.from_object(Config)
+    if config_name == "testing":
+        from .config import TestingConfig
+        app.config.from_object(TestingConfig)
+    else:
+        app.config.from_object(Config)
 
     # Инициализация расширений
     db.init_app(app)

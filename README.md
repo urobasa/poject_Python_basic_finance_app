@@ -27,11 +27,11 @@ cd finance-app
 
 2. Создай .env файл
 
-POSTGRES_USER=finance_user
+SECRET_KEY=secretkey
+DATABASE_URL=postgresql://finance_user:finance_pass@db:5432/finance_db
+FLASK_ENV=development
+FLASK_APP=run.py
 
-POSTGRES_PASSWORD=finance_pass
-
-POSTGRES_DB=finance_db
 
 3. Запусти контейнеры
 

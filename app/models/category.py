@@ -11,4 +11,4 @@ class Category(db.Model):
     operations = db.relationship('Operation', backref='category', lazy=True)
 
     def __repr__(self):
-        return f'<Category {self.name}>'
+        return f"<Category {self.name} ({self.type}), user_id={self.user_id}>"

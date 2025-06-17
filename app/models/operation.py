@@ -12,4 +12,4 @@ class Operation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f'<Operation {self.amount} {self.datetime}>'
+        return f"<Operation {self.amount} {self.category.name if self.category else 'Unknown'} on {self.datetime}>"
