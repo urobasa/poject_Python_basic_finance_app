@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
+from flask_login import login_required, current_user
 from flask import Blueprint, render_template, request
 from app.controllers.report_controller import get_summary, get_total_income, get_total_expense
 
 reports_bp = Blueprint('reports', __name__)
 
 @reports_bp.route('/')
+@login_required
 def report_summary():
     # Получаем из GET-параметров
     start_date = request.args.get('start_date')

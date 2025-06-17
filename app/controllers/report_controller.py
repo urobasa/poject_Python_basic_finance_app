@@ -1,3 +1,4 @@
+from flask_login import current_user
 from app.models.operation import Operation
 from app.models.category import Category
 from sqlalchemy import func
@@ -10,7 +11,7 @@ def get_summary(start_date=None, end_date=None):
         Category.name,
         Category.type,
         func.sum(Operation.amount)
-    ).join(Operation.category)
+    ).join(Operation.category).filter(Operation.user_id == current_user.id)
 
     if start_date:
         query = query.filter(Operation.datetime >= start_date)
@@ -24,7 +25,7 @@ def get_totals_by_type(start_date=None, end_date=None):
     query = db.session.query(
         Category.type,
         func.sum(Operation.amount)
-    ).join(Operation.category)
+    ).join(Operation.category).filter(Operation.user_id == current_user.id)
 
     if start_date:
         query = query.filter(Operation.datetime >= start_date)

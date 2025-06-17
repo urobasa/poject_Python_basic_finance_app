@@ -5,6 +5,7 @@ class Category(db.Model):
     name = db.Column(db.String(100), nullable=False)
     type = db.Column(db.String(10), nullable=False)  # 'income' или 'expense'
     parent_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     parent = db.relationship('Category', remote_side=[id], backref='children')
     operations = db.relationship('Operation', backref='category', lazy=True)

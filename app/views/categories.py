@@ -1,3 +1,4 @@
+from flask_login import login_required, current_user
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.controllers.category_controller import (
     get_categories, create_category,
@@ -7,12 +8,16 @@ from app.controllers.category_controller import (
 
 categories_bp = Blueprint('categories', __name__)
 
+
 @categories_bp.route('/')
+@login_required
 def list_categories():
     categories = get_categories()
     return render_template('categories/list.html', categories=categories)
 
+
 @categories_bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create_category_view():
     if request.method == 'POST':
         name = request.form['name']
@@ -26,7 +31,9 @@ def create_category_view():
     categories = get_categories()
     return render_template('categories/form.html', categories=categories)
 
+
 @categories_bp.route('/edit/<int:category_id>', methods=['GET', 'POST'])
+@login_required
 def edit_category_view(category_id):
     category = get_category_by_id(category_id)
     if not category:
@@ -44,7 +51,9 @@ def edit_category_view(category_id):
     categories = get_categories()
     return render_template('categories/form.html', category=category, categories=categories)
 
+
 @categories_bp.route('/delete/<int:category_id>', methods=['POST'])
+@login_required
 def delete_category_view(category_id):
     new_category_id = request.form.get('new_category_id')
 
@@ -57,7 +66,9 @@ def delete_category_view(category_id):
         flash('Нельзя удалить категорию с операциями без переноса их в другую категорию.')
     return redirect(url_for('categories.list_categories'))
 
+
 @categories_bp.route('/confirm_delete/<int:category_id>', methods=['GET', 'POST'])
+@login_required
 def confirm_delete_category(category_id):
     category = get_category_by_id(category_id)
     if not category:

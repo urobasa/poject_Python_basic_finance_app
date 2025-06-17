@@ -9,6 +9,7 @@ class Operation(db.Model):
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return f'<Operation {self.amount} {self.datetime}>'

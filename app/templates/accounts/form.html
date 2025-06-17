@@ -5,6 +5,7 @@
 <h2>{{ account and 'Редактировать' or 'Создать' }} счёт</h2>
 
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="mb-3">
         <label for="name" class="form-label">Название</label>
         <input type="text" name="name" class="form-control" required value="{{ account.name if account else '' }}">

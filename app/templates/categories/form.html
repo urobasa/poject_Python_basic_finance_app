@@ -5,6 +5,7 @@
 <h2>{{ category and 'Редактировать' or 'Создать' }} категорию</h2>
 
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="mb-3">
         <label for="name" class="form-label">Название</label>
         <input type="text" name="name" class="form-control" value="{{ category.name if category else '' }}" required>

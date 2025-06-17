@@ -1,10 +1,13 @@
+from flask_login import login_required, current_user
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from app.controllers.transfer_controller import create_transfer
 from app.controllers.account_controller import get_accounts
 
 transfer_bp = Blueprint('transfer', __name__)
 
+
 @transfer_bp.route("/transfer", methods=["GET", "POST"])
+@login_required
 def transfer():
     accounts = get_accounts()
     if request.method == "POST":

@@ -8,6 +8,7 @@ class Transfer(db.Model):
     amount = db.Column(db.Float, nullable=False)
     datetime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     description = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     from_account = db.relationship('Account', foreign_keys=[from_account_id])
     to_account = db.relationship('Account', foreign_keys=[to_account_id])

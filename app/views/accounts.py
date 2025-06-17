@@ -1,3 +1,4 @@
+from flask_login import login_required, current_user
 from flask import Blueprint, render_template, request, redirect, url_for
 from app.controllers.account_controller import (
     get_accounts,
@@ -9,12 +10,16 @@ from app.controllers.account_controller import (
 
 accounts_bp = Blueprint('accounts', __name__)
 
+
 @accounts_bp.route('/')
+@login_required
 def list_accounts():
     accounts = get_accounts()
     return render_template('accounts/list.html', accounts=accounts)
 
+
 @accounts_bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create_account_view():
     if request.method == 'POST':
         name = request.form['name']
@@ -27,7 +32,9 @@ def create_account_view():
 
     return render_template('accounts/form.html')
 
+
 @accounts_bp.route('/edit/<int:account_id>', methods=['GET', 'POST'])
+@login_required
 def edit_account_view(account_id):
     account = get_account_by_id(account_id)
     if not account:
@@ -44,7 +51,9 @@ def edit_account_view(account_id):
 
     return render_template('accounts/form.html', account=account)
 
+
 @accounts_bp.route('/delete/<int:account_id>', methods=['POST'])
+@login_required
 def delete_account_view(account_id):
     delete_account(account_id)
     return redirect(url_for('accounts.list_accounts'))
