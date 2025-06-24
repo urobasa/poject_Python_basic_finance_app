@@ -1,10 +1,11 @@
 from flask_login import login_required, current_user
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.controllers.category_controller import (
-    get_categories, create_category,
+    create_category,
     get_category_by_id, update_category,
     delete_category
 )
+from app.models.category import Category
 
 categories_bp = Blueprint('categories', __name__)
 
@@ -12,7 +13,8 @@ categories_bp = Blueprint('categories', __name__)
 @categories_bp.route('/')
 @login_required
 def list_categories():
-    categories = get_categories()
+    tree = Category.get_tree(user_id=current_user.id)
+    categories = Category.flatten_tree(tree)
     return render_template('categories/list.html', categories=categories)
 
 
@@ -28,7 +30,7 @@ def create_category_view():
         create_category(name, type, parent_id)
         return redirect(url_for('categories.list_categories'))
 
-    categories = get_categories()
+    categories = Category.flatten_tree(Category.get_tree(user_id=current_user.id))
     return render_template('categories/form.html', categories=categories)
 
 
@@ -48,7 +50,7 @@ def edit_category_view(category_id):
         update_category(category_id, name, type, parent_id)
         return redirect(url_for('categories.list_categories'))
 
-    categories = get_categories()
+    categories = Category.flatten_tree(Category.get_tree(user_id=current_user.id))
     return render_template('categories/form.html', category=category, categories=categories)
 
 
@@ -56,8 +58,6 @@ def edit_category_view(category_id):
 @login_required
 def delete_category_view(category_id):
     new_category_id = request.form.get('new_category_id')
-
-    # Явное преобразование: если указано — привести к int, иначе None
     new_category_id = int(new_category_id) if new_category_id and new_category_id.strip() else None
 
     success = delete_category(category_id, new_category_id)
@@ -75,7 +75,7 @@ def confirm_delete_category(category_id):
         flash('Категория не найдена.')
         return redirect(url_for('categories.list_categories'))
 
-    categories = [c for c in get_categories() if c.id != category.id]
+    categories = [c for c in Category.flatten_tree(Category.get_tree(user_id=current_user.id)) if c['id'] != category.id]
 
     if request.method == 'POST':
         raw = request.form.get('new_category_id')
@@ -84,8 +84,6 @@ def confirm_delete_category(category_id):
         except (ValueError, TypeError):
             flash('Ошибка: не выбрана новая категория для переноса операций.')
             return redirect(url_for('categories.confirm_delete_category', category_id=category_id))
-
-        print(f"[DEBUG] Удаляем категорию {category_id}, переносим операции в {new_category_id}")
 
         success = delete_category(category_id, new_category_id)
         if not success:

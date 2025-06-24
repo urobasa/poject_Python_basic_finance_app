@@ -3,14 +3,7 @@
 
 {% block content %}
 <h2>Категории</h2>
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="alert alert-warning">{{ messages[0] }}</div>
-  {% endif %}
-{% endwith %}
-
-<table class="table table-bordered">
+<table class="table table-bordered table-sm" id="category-table">
   <thead>
     <tr>
       <th>Название</th>
@@ -21,16 +14,19 @@
   </thead>
   <tbody>
     {% for cat in categories %}
-    <tr>
-      <td>{{ cat.name }}</td>
+    <tr data-id="{{ cat.id }}" data-parent-id="{{ cat.parent_id }}" data-has-children="{{ cat.has_children|lower }}"
+        class="{% if cat.parent_id %}d-none child-of-{{ cat.parent_id }}{% endif %}">
+      <td style="padding-left: {{ cat.level * 20 }}px; cursor: pointer;">
+        {% if cat.has_children %}
+          ▶ 
+        {% endif %}
+        {{ cat.name }}
+      </td>
       <td>{% if cat.type == 'income' %}Доход{% else %}Расход{% endif %}</td>
-      <td>{{ cat.parent.name if cat.parent else '—' }}</td>
+      <td>{% if cat.parent_id %}{{ cat.parent_id }}{% else %}—{% endif %}</td>
       <td>
-        <a href="{{ url_for('categories.edit_category_view', category_id=cat.id) }}"
-           class="btn btn-sm btn-primary">✏️</a>
-
-        <a href="{{ url_for('categories.confirm_delete_category', category_id=cat.id) }}"
-           class="btn btn-sm btn-danger">🗑</a>
+        <a href="{{ url_for('categories.edit_category_view', category_id=cat.id) }}" class="btn btn-sm btn-primary">✏️</a>
+        <a href="{{ url_for('categories.confirm_delete_category', category_id=cat.id) }}" class="btn btn-sm btn-danger">🗑</a>
       </td>
     </tr>
     {% endfor %}
@@ -40,4 +36,25 @@
 <a href="{{ url_for('categories.create_category_view') }}" class="btn btn-success">
   ➕ Новая категория
 </a>
+
+<script>
+document.querySelectorAll("#category-table tr[data-has-children='true']").forEach(row => {
+  row.addEventListener("click", (e) => {
+    if (!e.target.closest("a")) {  // ignore clicks on buttons
+      const id = row.dataset.id;
+      const children = document.querySelectorAll(`#category-table tr[data-parent-id='${id}']`);
+      const show = Array.from(children).some(child => child.classList.contains("d-none"));
+      children.forEach(child => {
+        child.classList.toggle("d-none", !show);
+
+        // если скрываем — рекурсивно скрываем всех потомков
+        if (!show) {
+          const descendants = document.querySelectorAll(`#category-table tr[data-parent-id='${child.dataset.id}']`);
+          descendants.forEach(d => d.classList.add("d-none"));
+        }
+      });
+    }
+  });
+});
+</script>
 {% endblock %}

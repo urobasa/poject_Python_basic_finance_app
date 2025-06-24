@@ -29,11 +29,19 @@ def update_account(account_id, name, type, balance, is_default):
         db.session.commit()
     return account
 
+from flask import flash
+
 def delete_account(account_id):
     account = Account.query.get(account_id)
-    if account:
-        db.session.delete(account)
-        db.session.commit()
+    if not account:
+        return
+
+    if account.operations:
+        flash("Cannot delete account with existing operations.", "danger")
+        return
+
+    db.session.delete(account)
+    db.session.commit()
 
 def get_default_account():
     return Account.query.filter_by(user_id=current_user.id, is_default=True).first()

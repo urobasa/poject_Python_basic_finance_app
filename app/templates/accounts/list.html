@@ -25,6 +25,7 @@
             <td>
                 <a href="{{ url_for('accounts.edit_account_view', account_id=acc.id) }}" class="btn btn-sm btn-primary">✏️</a>
                 <form action="{{ url_for('accounts.delete_account_view', account_id=acc.id) }}" method="post" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-sm btn-danger">🗑</button>
                 </form>
             </td>

@@ -11,20 +11,64 @@
         <input type="number" step="0.01" name="amount" class="form-control" required>
     </div>
 
-    <div class="mb-3">
-        <label for="category_id" class="form-label">
-            Категория
-            <a href="{{ url_for('categories.create_category_view') }}" class="btn btn-sm btn-outline-secondary">➕ Новая</a>
-        </label>
-        <select name="category_id" class="form-select" required>
-            {% for cat in categories %}
-            <option value="{{ cat.id }}">
-                    {{ cat.name }} ({% if cat.type == 'income' %}Доход{% else %}Расход{% endif %})
-            </option>
-
-            {% endfor %}
-        </select>
+    
+<div class="mb-3">
+    <label class="form-label">Категория</label>
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Выберите категорию
+        </button>
+        <ul class="dropdown-menu p-0" aria-labelledby="categoryDropdown" style="max-height: 300px; overflow-y: auto; width: 100%;">
+            <table class="table table-bordered table-sm mb-0" id="category-table">
+                <tbody>
+                {% for cat in categories %}
+                    <tr data-id="{{ cat.id }}" data-parent-id="{{ cat.parent_id }}" data-has-children="{{ cat.has_children|lower }}"
+                        class="{% if cat.parent_id %}d-none child-of-{{ cat.parent_id }}{% endif %}" style="cursor: pointer;">
+                        <td style="padding-left: {{ cat.level * 20 }}px;">
+                            {% if cat.has_children %}<span class="toggle-arrow" style="cursor: pointer;">▶</span>{% endif %}
+                            {{ cat.name }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </ul>
     </div>
+    <input type="hidden" name="category_id" id="selected-category-id" required>
+</div>
+
+<script>
+document.querySelector("#category-table").addEventListener("click", function (e) {
+    e.stopPropagation();
+});
+
+document.querySelectorAll("#category-table td").forEach(cell => {
+    cell.addEventListener("click", function (e) {
+        const row = cell.closest("tr");
+        const id = row.dataset.id;
+        const hasChildren = row.dataset.hasChildren === "true";
+
+        if (hasChildren && e.offsetX < 20) {
+            const children = document.querySelectorAll(`#category-table tr[data-parent-id='${id}']`);
+            const show = Array.from(children).some(child => child.classList.contains("d-none"));
+            children.forEach(child => {
+                child.classList.toggle("d-none", !show);
+                if (!show) {
+                    const descendants = document.querySelectorAll(`#category-table tr[data-parent-id='${child.dataset.id}']`);
+                    descendants.forEach(desc => desc.classList.add("d-none"));
+                }
+            });
+            return;
+        }
+
+        const name = cell.innerText.trim();
+        document.getElementById("selected-category-id").value = id;
+        document.getElementById("categoryDropdown").innerText = name;
+        bootstrap.Dropdown.getOrCreateInstance(document.getElementById("categoryDropdown")).hide();
+    });
+});
+</script>
+
 
     <div class="mb-3">
         <label for="account_id" class="form-label">

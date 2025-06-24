@@ -1,0 +1,21 @@
+
+{% extends 'base.html' %}
+{% block title %}Редактировать пользователя{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Редактировать пользователя {{ user.username }}</h2>
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+            <label for="password" class="form-label">Новый пароль (если нужно)</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" {% if user.is_admin %}checked{% endif %}>
+            <label class="form-check-label" for="is_admin">Администратор</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('admin.user_list') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}
