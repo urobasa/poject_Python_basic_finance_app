@@ -39,8 +39,10 @@ def create_app(config_name=None):
     from .views.reports import reports_bp
     from .views.transfer_view import transfer_bp
     from app.views.auth import auth_bp
+    from app.views.admin import admin_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(operations_bp, url_prefix='/operations')
     app.register_blueprint(categories_bp, url_prefix='/categories')
     app.register_blueprint(accounts_bp, url_prefix='/accounts')
@@ -50,5 +52,15 @@ def create_app(config_name=None):
     @app.route('/')
     def index_redirect():
         return redirect(url_for('operations.list_operations'))
+
+
+    from flask import redirect, request, url_for
+    from app.models.user import User
+    @app.before_request
+    def redirect_if_no_users():
+        if request.endpoint and 'static' in request.endpoint:
+            return
+        if not User.query.first() and not request.path.startswith(('/register', '/static')):
+            return redirect(url_for('auth.register'))
 
     return app

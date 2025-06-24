@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from datetime import datetime
 
 from app.controllers.operation_controller import create_operation, get_operations_filtered
-from app.controllers.category_controller import get_categories
+# from app.controllers.category_controller import get_categories
 from app.controllers.account_controller import get_accounts, get_default_account
 from app.models.category import Category
 
@@ -34,7 +34,8 @@ def create_operation_view():
 
     default_account = get_default_account()
     default_account_id = default_account.id if default_account else None
-    categories = [cat for cat in get_categories() if cat.user_id == current_user.id]
+    tree = Category.get_tree(user_id=current_user.id)
+    categories = Category.flatten_tree(tree)
     accounts = [acc for acc in get_accounts() if acc.user_id == current_user.id]
     return render_template(
         'operations/form.html',
