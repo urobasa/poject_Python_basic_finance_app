@@ -1,3 +1,4 @@
+
 from datetime import datetime, timedelta
 from flask_login import login_required, current_user
 from flask import Blueprint, render_template, request
@@ -8,11 +9,9 @@ reports_bp = Blueprint('reports', __name__)
 @reports_bp.route('/')
 @login_required
 def report_summary():
-    # Получаем из GET-параметров
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
 
-    # Если не заданы — подставим: месяц назад и сегодня
     if not end_date:
         end = datetime.now()
         end_date = end.strftime('%Y-%m-%d')
@@ -32,10 +31,23 @@ def report_summary():
     total_expense = get_total_expense(start_date, real_end.strftime('%Y-%m-%d'))
 
     return render_template(
-        'reports/summary.html',
+        'reports/summary_tab.html',
         summary=summary,
         total_income=total_income,
         total_expense=total_expense,
         start_date=start_date,
-        end_date=end_date
+        end_date=end_date,
+        active_tab='summary'
     )
+
+
+@reports_bp.route('/charts')
+@login_required
+def report_charts():
+    return render_template("reports/charts_tab.html", active_tab='charts')
+
+
+@reports_bp.route('/analytics')
+@login_required
+def report_analytics():
+    return render_template("reports/ds_tab.html", active_tab='ds')
