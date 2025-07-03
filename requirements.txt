@@ -11,3 +11,8 @@ pytest
 pytest-flask
 coverage==7.4.1
 
+
+Faker>=18.0.0
+matplotlib
+pandas
+prophet

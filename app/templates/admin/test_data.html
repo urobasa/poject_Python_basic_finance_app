@@ -1,0 +1,13 @@
+
+{% extends 'admin/admin_panel.html' %}
+{% block admin_content %}
+<form action="{{ url_for('admin.test_data') }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn-primary">Создать тестовые данные</button>
+</form>
+
+<form action="{{ url_for('admin.generate_operations') }}" method="post" style="margin-top: 1em;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn-primary">Создать операции</button>
+</form>
+{% endblock %}

@@ -54,7 +54,7 @@
 </table>
         </ul>
     </div>
-    <input type="hidden" name="category_id" id="selected-category-id" required value="">
+    <input type="hidden" name="category_id" id="selected-category-id" required value="{{ form_data.category_id if form_data else '' }}">
 </div>
 
 
@@ -132,7 +132,7 @@ document.querySelectorAll("#category-table td").forEach(cell => {
 
     <div class="mb-3">
         <label for="description" class="form-label">Описание</label>
-        <textarea name="description" class="form-control">{{ form_data.description if form_data else "" }}</textarea>
+        <textarea name="description" class="form-control"></textarea>
     </div>
 
     <button type="submit" class="btn btn-primary">Сохранить</button>

@@ -1,0 +1,18 @@
+
+{% extends 'base.html' %}
+{% block title %}Аналитика{% endblock %}
+
+{% block content %}
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'summary' %}active{% endif %}" href="{{ url_for('reports.summary') }}">📋 Сводка</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'charts' %}active{% endif %}" href="{{ url_for('reports.report_charts') }}">📊 Диаграммы</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'ds' %}active{% endif %}" href="{{ url_for('reports.report_analytics') }}">🧠 DataScience</a>
+    </li>
+</ul>
+{% block analytics_content %}{% endblock %}
+{% endblock %}

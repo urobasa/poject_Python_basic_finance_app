@@ -1,0 +1,75 @@
+
+{% block content %}
+<button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse"
+        data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+  🔍 Показать фильтры
+</button>
+
+<div class="collapse mb-4 {% if request.args %}show{% endif %}" id="filterCollapse">
+  <form method="get" class="row g-3">
+    <div class="col-md-3">
+      <label>С даты:</label>
+      <input type="date" name="start_date" value="{{ request.args.get('start_date', '') }}" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <label>По дату:</label>
+      <input type="date" name="end_date" value="{{ request.args.get('end_date', '') }}" class="form-control">
+    </div>
+    <div class="col-md-3 d-flex align-items-end gap-2">
+      <button type="submit" class="btn btn-primary me-2">Применить</button>
+      <a href="{{ url_for('reports.report_charts') }}" class="btn btn-secondary">Сбросить</a>
+    </div>
+  </form>
+</div>
+<h2>📊 Диаграммы</h2>
+
+<!-- Подключение Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="row">
+  <div class="col-md-6">
+    <h5>Распределение по категориям</h5>
+    <canvas id="categoryChart"></canvas>
+  </div>
+  <div class="col-md-6">
+    <h5>Доходы и Расходы</h5>
+    <canvas id="typeChart"></canvas>
+  </div>
+</div>
+
+<script>
+const categoryData = {{ category_data | tojson }};
+const typeData = {{ type_data | tojson }};
+
+// Круговая диаграмма по категориям
+new Chart(document.getElementById('categoryChart'), {
+    type: 'pie',
+    data: {
+        labels: categoryData.labels,
+        datasets: [{
+            label: 'Сумма',
+            data: categoryData.data,
+        }]
+    }
+});
+
+// Столбчатая диаграмма доходов и расходов
+new Chart(document.getElementById('typeChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Доходы', 'Расходы'],
+        datasets: [{
+            label: 'Сумма',
+            data: [typeData.income, typeData.expense],
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

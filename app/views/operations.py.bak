@@ -1,3 +1,4 @@
+
 from flask_login import login_required, current_user
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from datetime import datetime
@@ -20,19 +21,17 @@ def create_operation_view():
     if request.method == 'POST':
         amount = float(request.form['amount'])
         category_id_raw = request.form.get('category_id')
-
-        if not category_id_raw:
-            flash('Категория не выбрана.', 'danger')
-            return render_template(
-                'operations/form.html',
-                categories=categories,
-                accounts=accounts,
-                default_account_id=default_account_id,
-                now=datetime.now(),
-                form_data=request.form
-            )
-
-        category_id = int(category_id_raw)
+    if not category_id_raw:
+        flash('Категория не выбрана.', 'danger')
+        return render_template(
+            'operations/form.html',
+            categories=categories,
+            accounts=accounts,
+            default_account_id=default_account_id,
+            now=datetime.now(),
+            form_data=request.form
+        )
+    category_id = int(category_id_raw)
         account_id = int(request.form['account_id'])
         description = request.form.get('description')
 

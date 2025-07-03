@@ -9,20 +9,7 @@
 </p>
 
 {% if category.operations %}
-  <p>В этой категории есть операции. Выберите категорию, куда их перенести:</p>
-
-  <form method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="mb-3">
-      <label for="new_category_id" class="form-label">Категория для переноса</label>
-      <select name="new_category_id" class="form-select" required>
-        {% for c in categories %}
-          <option value="{{ c.id }}">{{ c.name }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <button type="submit" class="btn btn-danger">Удалить и перенести</button>
+  <p>В этой категории есть операции, удалить категорию невозможно</p>
     <a href="{{ url_for('categories.list_categories') }}" class="btn btn-secondary">Отмена</a>
   </form>
 {% else %}

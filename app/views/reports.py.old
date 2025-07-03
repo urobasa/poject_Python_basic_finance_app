@@ -1,53 +1,43 @@
-from flask import Blueprint, render_template, request
-from flask_login import login_required, current_user
-from datetime import datetime
-from statistics import mean, median, stdev
-import matplotlib.pyplot as plt
-import pandas as pd
-import base64
-from io import BytesIO
-from prophet import Prophet
-from app.extensions import db
-from app.models.category import Category
-from app.models.operation import Operation
 
-
-from flask import Blueprint, render_template, request
-from flask_login import login_required, current_user
 from datetime import datetime, timedelta
-from app.controllers.report_controller import get_summary_table, get_total_income, get_total_expense
+from flask_login import login_required, current_user
+from flask import Blueprint, render_template, request
+from app.controllers.report_controller import get_summary, get_total_income, get_total_expense
 
 reports_bp = Blueprint('reports', __name__)
 
 @reports_bp.route('/')
 @login_required
-def summary():
-    start_date_str = request.args.get('start_date')
-    end_date_str = request.args.get('end_date')
+def report_summary():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
 
-    if start_date_str:
-        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+    if not end_date:
+        end = datetime.now()
+        end_date = end.strftime('%Y-%m-%d')
     else:
-        start_date = datetime.now() - timedelta(days=30)
-        start_date_str = start_date.strftime('%Y-%m-%d')
+        end = datetime.strptime(end_date, '%Y-%m-%d')
 
-    if end_date_str:
-        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+    if not start_date:
+        start = end - timedelta(days=30)
+        start_date = start.strftime('%Y-%m-%d')
     else:
-        end_date = datetime.now()
-        end_date_str = end_date.strftime('%Y-%m-%d')
+        start = datetime.strptime(start_date, '%Y-%m-%d')
 
-    summary = get_summary_table(current_user.id, start_date, end_date)
-    total_income = get_total_income(current_user.id, start_date, end_date)
-    total_expense = get_total_expense(current_user.id, start_date, end_date)
+    real_end = end + timedelta(days=1)
+
+    summary = get_summary(start_date, real_end.strftime('%Y-%m-%d'))
+    total_income = get_total_income(start_date, real_end.strftime('%Y-%m-%d'))
+    total_expense = get_total_expense(start_date, real_end.strftime('%Y-%m-%d'))
 
     return render_template(
-        'reports/summary.html',
-        categories=summary,
+        'reports/summary_tab.html',
+        summary=summary,
         total_income=total_income,
         total_expense=total_expense,
-        start_date=start_date_str,
-        end_date=end_date_str
+        start_date=start_date,
+        end_date=end_date,
+        active_tab='summary'
     )
 
 
@@ -219,5 +209,3 @@ def report_analytics():
     }
 
     return render_template("reports/ds_tab.html", active_tab='ds', chart=chart_data, stats=stats, forecast_chart=forecast_chart)
-    
-

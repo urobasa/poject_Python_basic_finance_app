@@ -4,9 +4,10 @@
 {% block content %}
 <h2>Все операции</h2>
 
-<button class="btn btn-outline-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
-  🔍 Показать фильтры
-</button>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <a href="{{ url_for('operations.create_operation_view') }}" class="btn btn-success">➕ Новая операция</a>
+  <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">🔍 Показать фильтры</button>
+</div>
 
 <div class="collapse mb-4 {% if request.args %}show{% endif %}" id="filterCollapse">
   <form method="get" class="row g-3">
@@ -78,7 +79,7 @@
     </tbody>
 </table>
 
-<a href="{{ url_for('operations.create_operation_view') }}" class="btn btn-success">➕ Новая операция</a>
+
 {% endblock %}
             <option value="expense" {% if category and category.type == 'expense' %}selected{% endif %}>Расход</option>
             <option value="income" {% if category and category.type == 'income' %}selected{% endif %}>Доход</option>

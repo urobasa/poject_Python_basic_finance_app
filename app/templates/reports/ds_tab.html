@@ -1,0 +1,54 @@
+{% extends 'reports/analytics_panel.html' %}
+{% block analytics_content %}
+<h2>🧠 Data Science Анализ</h2>
+<!-- Форма фильтрации -->
+<form class="row g-3 mb-4" method="get">
+<div class="col-md-3">
+<label>С даты:</label>
+<input class="form-control" name="start_date" type="date" value="{{ request.args.get('start_date', '') }}"/>
+</div>
+<div class="col-md-3">
+<label>По дату:</label>
+<input class="form-control" name="end_date" type="date" value="{{ request.args.get('end_date', '') }}"/>
+</div>
+<div class="col-md-3 align-self-end d-flex gap-2">
+<button class="btn btn-primary" type="submit">Применить</button>
+<a class="btn btn-secondary" href="{{ url_for('reports.report_analytics') }}">Сбросить</a>
+</div>
+</form>
+<div class="row">
+<div class="col-md-6">
+<h5>Расходы по времени</h5>
+    {% if chart %}
+      <img class="img-fluid mb-3" src="data:image/png;base64,{{ chart }}"/>
+    {% else %}
+      <p>Нет данных для отображения графика.</p>
+    {% endif %}
+
+        {% if stats %}
+        <ul class="list-group mb-3 mt-3">
+<li class="list-group-item"><strong>Среднее значение:</strong> {{ stats.mean | round(2) }} ₽</li>
+<li class="list-group-item"><strong>Медиана:</strong> {{ stats.median | round(2) }} ₽</li>
+<li class="list-group-item"><strong>Стандартное отклонение:</strong> {{ stats.std | round(2) }} ₽</li>
+<li class="list-group-item"><strong>Обнаруженные аномалии:</strong> {{ stats.anomalies|length }}</li>
+</ul>
+        {% if stats.anomalies %}
+        <h6>Аномальные операции:</h6>
+<ul>
+          {% for op in stats.anomalies %}
+          <li>{{ op.datetime.strftime('%Y-%m-%d') }} — {{ op.amount }} ₽ ({{ op.category.name }})</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endif %}
+        </div>
+<div class="col-md-6">
+<h5>Прогноз расходов на 30 дней</h5>
+    {% if forecast_chart %}
+      <img class="img-fluid mb-3" src="data:image/png;base64,{{ forecast_chart }}"/>
+    {% else %}
+      <p>Недостаточно данных для прогноза.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

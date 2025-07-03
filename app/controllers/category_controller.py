@@ -27,18 +27,10 @@ def update_category(category_id, name, type, parent_id=None):
         db.session.commit()
     return category
 
-def delete_category(category_id, new_category_id=None):
+def delete_category(category_id):
     category = Category.query.filter_by(id=category_id, user_id=current_user.id).first()
-    if not category:
+    if not category or category.operations:
         return False
-
-    if category.operations:
-        if new_category_id is None:
-            return False
-
-        for op in category.operations:
-            op.category_id = new_category_id
-            db.session.add(op)
 
     db.session.delete(category)
     db.session.commit()

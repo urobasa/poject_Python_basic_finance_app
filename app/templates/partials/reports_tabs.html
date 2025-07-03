@@ -1,0 +1,12 @@
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link {% if request.path == '/reports/' %}active{% endif %}" href="/reports/">📋 Сводка</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.path.startswith('/reports/charts') %}active{% endif %}" href="/reports/charts">📊 Диаграммы</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.path.startswith('/reports/analytics') %}active{% endif %}" href="/reports/analytics">🧠 DataScience</a>
+    </li>
+</ul>

@@ -1,3 +1,4 @@
+from app.models.category import Category
 from flask_login import current_user
 from app import db
 from app.models.operation import Operation
@@ -5,6 +6,13 @@ from app.models.account import Account
 from datetime import datetime
 
 def create_operation(amount, category_id, account_id, description=None, dt=None):
+    dt = dt or datetime.utcnow()
+
+    # Проверка категории
+    category = Category.query.filter_by(id=category_id, user_id=current_user.id).first()
+    if not category:
+        return None  # сигнал в контроллер вью о проблеме
+
     dt = dt or datetime.utcnow()
     operation = Operation(
         amount=amount,
@@ -17,7 +25,7 @@ def create_operation(amount, category_id, account_id, description=None, dt=None)
 
     # Обновим баланс счёта
     account = Account.query.get(account_id)
-    category_type = operation.category.type
+    category_type = category.type
     if category_type == 'expense':
         account.balance -= amount
     else:
@@ -60,4 +68,4 @@ def get_operations_filtered(category_id=None, start_date=None, end_date=None, am
     if op_type in ['income', 'expense']:
         query = query.join(Operation.category).filter_by(type=op_type)
 
-    return query.order_by(Operation.datetime.desc()).all()
+    return query.order_by(Operation.datetime.desc(), Operation.id.desc()).all()

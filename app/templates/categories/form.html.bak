@@ -8,29 +8,27 @@
 <form method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="mb-3">
-        <label for="name" class="form-label mb-0">Название</label>
-        <input type="text" name="name" class="form-control mt-0" value="{{ category.name if category else '' }}" required>
+        <label for="name" class="form-label">Название</label>
+        <input type="text" name="name" class="form-control" value="{{ category.name if category else '' }}" required>
     </div>
 
     <div class="mb-3">
-        <label for="type" class="form-label mb-0">Тип</label>
-        <select name="type" class="form-select mt-0" required>
+        <label for="type" class="form-label">Тип</label>
+        <select name="type" class="form-select" required>
             <option value="expense" {% if category and category.type == 'expense' %}selected{% endif %}>Расход</option>
             <option value="income" {% if category and category.type == 'income' %}selected{% endif %}>Доход</option>
         </select>
-    </div>
+
         {% if category_path %}
           <div class="mb-3">
-            <label for="category_path" class="form-label mb-0">Текущая иерархия</label>
-            <input type="text" class="form-control mt-0" id="category_path" value="{{ category_path }}" readonly>
+            <label for="category_path" class="form-label">Текущая иерархия</label>
+            <input type="text" class="form-control" id="category_path" value="{{ category_path }}" readonly>
           </div>
         {% endif %}
 
     <div class="mb-3">
-        <div class="mb-1">
-           <label class="form-label mb-0">Изменить родительскую категорию:</label>
-           <div class="form-text mt-0">(Незаполненное поле сделает категорию корневой)</div>
-        </div>
+        <label class="form-label">Изменить родительскую категорию:</label>
+        <div class="form-text">(Незаполненное поле сделает категорию корневой)</div>
         <div class="dropdown">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 Выберите категорию

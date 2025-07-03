@@ -18,6 +18,8 @@ def register():
 
         user = User(username=username)
         user.set_password(password)
+        if User.query.count() == 0:
+            user.is_admin = True
         db.session.add(user)
         db.session.commit()
         flash('Registration successful. Please log in.')

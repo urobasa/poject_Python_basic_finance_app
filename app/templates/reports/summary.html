@@ -1,49 +1,101 @@
+
 {% extends 'base.html' %}
-{% block title %}Аналитика{% endblock %}
+{% block title %}Сводка по категориям{% endblock %}
 
 {% block content %}
-<h2>Отчёт</h2>
 
-<form method="get" class="row mb-4">
-    <div class="col-md-3">
-        <label class="form-label">Начало периода</label>
-        <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Конец периода</label>
-        <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
-    </div>
-    <div class="col-md-3 d-flex align-items-end">
-        <button type="submit" class="btn btn-primary">Показать</button>
-    </div>
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link active" href="/reports/">📋 Сводка</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/reports/charts">📊 Диаграммы</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/reports/analytics">🧠 DataScience</a>
+    </li>
+</ul>
+
+<h2>📋 Сводка по категориям</h2>
+
+<form method="get" class="row g-3 mb-3">
+  <div class="col-md-3">
+    <label>С даты:</label>
+    <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+  </div>
+  <div class="col-md-3">
+    <label>По дату:</label>
+    <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+  </div>
+  <div class="col-md-2 align-self-end">
+    <button type="submit" class="btn btn-primary">Применить фильтр</button>
+  </div>
 </form>
 
-<div class="row mb-3">
-    <div class="col">
-        <div class="alert alert-success">Доход: {{ total_income }} ₽</div>
-    </div>
-    <div class="col">
-        <div class="alert alert-danger">Расход: {{ total_expense }} ₽</div>
-    </div>
-</div>
-
-<h4>Сводка по категориям</h4>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Категория</th>
-            <th>Тип</th>
-            <th>Сумма</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in summary %}
-        <tr>
-            <td>{{ item[0] }}</td>
-            <td>{{ 'Доход' if item[1] == 'income' else 'Расход' }}</td>
-            <td>{{ item[2] }} ₽</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<table class="table table-bordered table-sm" id="summary-table">
+  <thead>
+    <tr>
+      <th>Категория</th>
+      <th>Сумма</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="table-secondary">
+      <td colspan="2"><strong>Расход</strong></td>
+    </tr>
+    {% for cat in categories if cat.type == 'expense' %}
+      <tr data-id="{{ cat.id }}" data-parent-id="{{ cat.parent_id }}" class="{% if cat.parent_id %}d-none child-of-{{ cat.parent_id }}{% endif %}">
+        <td style="padding-left: {{ cat.level * 20 }}px;">
+          {% if cat.has_children %}
+            <span class="toggle-arrow" style="cursor: pointer;">▶</span>
+          {% endif %}
+          {{ cat.name }}
+        </td>
+        <td>{{ cat.amount }}</td>
+      </tr>
+    {% endfor %}
+    <tr class="table-secondary">
+      <td colspan="2"><strong>Доход</strong></td>
+    </tr>
+    {% for cat in categories if cat.type == 'income' %}
+      <tr data-id="{{ cat.id }}" data-parent-id="{{ cat.parent_id }}" class="{% if cat.parent_id %}d-none child-of-{{ cat.parent_id }}{% endif %}">
+        <td style="padding-left: {{ cat.level * 20 }}px;">
+          {% if cat.has_children %}
+            <span class="toggle-arrow" style="cursor: pointer;">▶</span>
+          {% endif %}
+          {{ cat.name }}
+        </td>
+        <td>{{ cat.amount }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
 </table>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll("#summary-table .toggle-arrow").forEach(arrow => {
+    arrow.addEventListener("click", function (e) {
+      e.stopPropagation();
+      const row = arrow.closest("tr");
+      const id = row.getAttribute("data-id");
+      const isHidden = document.querySelector(`#summary-table tr[data-parent-id='${id}']`)?.classList.contains("d-none");
+
+      const toggleChildren = (parentId, show) => {
+        document.querySelectorAll(`#summary-table tr[data-parent-id='${parentId}']`).forEach(child => {
+          child.classList.toggle("d-none", !show);
+          if (!show) {
+            const childId = child.getAttribute("data-id");
+            toggleChildren(childId, false);
+          }
+        });
+      };
+
+      toggleChildren(id, isHidden);
+    });
+  });
+});
+</script>
+
+
 {% endblock %}

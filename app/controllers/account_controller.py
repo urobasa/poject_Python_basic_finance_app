@@ -1,6 +1,7 @@
 from flask_login import current_user
 from app import db
 from app.models.account import Account
+from flask import flash
 
 def create_account(name, type, balance=0.0, is_default=False):
     if is_default:
@@ -31,9 +32,15 @@ def update_account(account_id, name, type, balance, is_default):
 
 def delete_account(account_id):
     account = Account.query.get(account_id)
-    if account:
-        db.session.delete(account)
-        db.session.commit()
+    if not account:
+        return
+
+    if account.operations:
+        flash("Cannot delete account with existing operations.", "danger")
+        return
+
+    db.session.delete(account)
+    db.session.commit()
 
 def get_default_account():
     return Account.query.filter_by(user_id=current_user.id, is_default=True).first()
